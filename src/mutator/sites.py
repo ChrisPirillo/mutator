@@ -181,7 +181,8 @@ def _is_statement(node_type: str) -> bool:
 def _statement_line(node) -> int:
     current = node.parent
     while current is not None:
-        if _is_statement(current.type):
+        # Python's grammar puts an assignment or call straight under its block, with no *_statement node.
+        if _is_statement(current.type) or (current.parent is not None and current.parent.type in ("block", "module")):
             return current.start_point[0] + 1
         current = current.parent
     return node.start_point[0] + 1

@@ -234,3 +234,16 @@ def test_a_site_remembers_where_its_statement_starts(tmp_path):
     assert (4, "+", 2) in anchors
     assert (4, "1", 2) in anchors
     assert (7, "true", 6) in anchors
+
+
+def test_a_python_assignment_or_call_anchors_where_it_starts(tmp_path):
+    source = """def save(db, now):
+    total = (
+        now + 1)
+    db.run(
+        now - 1)
+"""
+    sites = _sites(tmp_path, "src/demo/save.py", source)
+    anchors = {(site.line, site.original, site.anchor_line) for site in sites}
+    assert (3, "+", 2) in anchors
+    assert (5, "-", 4) in anchors
